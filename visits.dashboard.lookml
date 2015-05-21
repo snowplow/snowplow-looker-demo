@@ -16,12 +16,7 @@
 # Data Model: Demo
 # Version: 1.0.0
 
-- connection: snowplow_demo
-
-- scoping: true                  # for backward compatibility
-- include: '*.view.lookml'       # include all views
-- include: '*.dashboard.lookml'  # include all dashboards
-
-- explore: page_views
-
-- explore: visits
+- dashboard: visits
+  title: Visits
+  layout: tile
+  tile_size: 100
