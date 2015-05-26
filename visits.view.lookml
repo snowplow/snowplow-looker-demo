@@ -22,79 +22,229 @@
   
   # DIMENSIONS #
   
-  # Visiter identifier
+  # Visitor identifier
   
   - dimension: visitor_id
     sql: ${TABLE}.domain_userid
+    hidden: true
   
-  # Visit identifiers (custom server-side sessionization)
+  # Visit identifier
   
-  - dimension: visit_index
+  - dimension: visit_id
+    sql: ${TABLE}.visit_id
+    hidden: true
+  
+  - dimension: visit
     type: int
     sql: ${TABLE}.visit_index
   
-  # TEMPORARY
+  # New visitor
   
-  - dimension: page_path
-    sql: ${TABLE}.page_urlpath
-  
-  - dimension: converted
+  - dimension: new_visitor
     type: yesno
-    sql: ${TABLE}.other_count > 0
+    sql: ${visit} = 1
   
-  - dimension: returning
+  # Landing page
+  
+  - dimension: landing_page
+    sql: ${TABLE}.landing_page_urlhost || ${TABLE}.landing_page_urlpath
+  
+  - dimension: landing_page_host
+    sql: ${TABLE}.landing_page_urlhost
+    hidden: true
+  
+  - dimension: landing_page_path
+    sql: ${TABLE}.landing_page_urlpath
+  
+  # Landing page details
+  
+  - dimension: landing_page_title
+    sql: ${TABLE}.landing_page_title
+  
+  - dimension: landing_page_section
+    sql: ${TABLE}.section_1
+  
+  - dimension: landing_page_is_blogpost
     type: yesno
-    sql: ${TABLE}.visit_index > 1
+    sql: ${TABLE}.landing_page_blogpost
   
-  - dimension: blogpost
-    type: yesno
-    sql: ${TABLE}.blogpost
+  - dimension: landing_page_blog_breadcrumb
+    sql: ${TABLE}.landing_blog_breadcrumb
   
-  - dimension: first_touch
+  # Engagement
+  
+  - dimension: total_page_views
+    type: int
+    sql: ${TABLE}.page_views
+    hidden: true
+  
+  - dimension: device_timestamp
     type: time
-    timeframes: [time, hour, date, week, month, day_of_week]
+    timeframes: [time_of_day, hour_of_day, day_of_week] # Relative
+    sql: ${TABLE}.min_dvce_tstamp
+  
+  - dimension: max_dvce_tstamp
+    sql: ${TABLE}.max_dvce_tstamp
+    hidden: true
+  
+  - dimension: timestamp
+    type: time
+    timeframes: [time, hour, date, week, month]
     sql: ${TABLE}.first_touch_tstamp
   
-  - dimension: path
-    sql: ${TABLE}.path
+  - dimension: last_touch_tstamp
+    type: time
+    timeframes: time
+    sql: ${TABLE}.last_touch_tstamp
+    hidden: true
   
-  # temp measures
+  - dimension: time_engaged
+    type: int
+    sql: ${TABLE}.time_engaged_in_seconds
+    hidden: true
   
-  - measure: count
-    type: count
+  # Source
   
-  - measure: percent_of_total
-    type: percent_of_total
-    sql: ${count}
+  - dimension: referrer
+    sql: ${TABLE}.refr_urlhost || ${TABLE}.refr_urlpath
   
-  - measure: blogpost_count
-    type: count
-    filter:
-      blogpost: yes
+  - dimension: referrer_host
+    sql: ${TABLE}.refr_urlhost
+  
+  - dimension: referrer_path
+    sql: ${TABLE}.refr_urlpath
+    hidden: true
+  
+  - dimension: referrer_medium
+    sql: ${TABLE}.refr_medium
+  
+  - dimension: referrer_source
+    sql: ${TABLE}.refr_source
+  
+  - dimension: referrer_term
+    sql: ${TABLE}.refr_term
+    hidden: true
+  
+  - dimension: marketing_medium
+    sql: ${TABLE}.mkt_medium
+    hidden: true
+  
+  - dimension: marketing_source
+    sql: ${TABLE}.mkt_source
+    hidden: true
+  
+  - dimension: marketing_term
+    sql: ${TABLE}.mkt_term
+    hidden: true
+  
+  - dimension: marketing_content
+    sql: ${TABLE}.mkt_content
+    hidden: true
+  
+  - dimension: marketing_campaign
+    sql: ${TABLE}.mkt_campaign
+    hidden: true
+  
+  # Location
+  
+  - dimension: country
+    sql: ${TABLE}.geo_country
+  
+  - dimension: country_code_2
+    sql: ${TABLE}.geo_country_code_2_characters
+    hidden: true
+  
+  - dimension: country_code_3
+    sql: ${TABLE}.geo_country_code_3_characters
+    hidden: true
+  
+  - dimension: region
+    sql: ${TABLE}.geo_region
+    hidden: true
+  
+  - dimension: region_name
+    sql: ${TABLE}.geo_region_name
+    hidden: true
+  
+  - dimension: city
+    sql: ${TABLE}.geo_city
+  
+  # Paths
+  
+  - dimension: total_sections
+    type: int
+    sql: ${TABLE}.max_section_count
+    hidden: true
+  
+  - dimension: section_1
+    sql: ${TABLE}.section_1
+    hidden: true
+  
+  - dimension: section_2
+    sql: ${TABLE}.section_2
+    hidden: true
+  
+  - dimension: section_3
+    sql: ${TABLE}.section_3
+    hidden: true
+  
+  - dimension: section_4
+    sql: ${TABLE}.section_4
+    hidden: true
+  
+  - dimension: section_5
+    sql: ${TABLE}.section_5
+    hidden: true
+  
+  - dimension: path_2
+    sql: ${TABLE}.path_2
+    hidden: true
+  
+  - dimension: path_3
+    sql: ${TABLE}.path_3
+    hidden: true
+  
+  - dimension: path_4
+    sql: ${TABLE}.path_4
+    hidden: true
+  
+  - dimension: path_5
+    sql: ${TABLE}.path_5
+    hidden: true
+  
+  # MEASURES #
+  
+  # Basic measures
+  
+  - measure: visits
+    type: count_distinct
+    sql: ${visit_id}
     
-  - measure: returning_count
-    type: count
+  - measure: visitors
+    type: count_distinct
+    sql: ${visitor_id}
+  
+  # New versus returning
+  
+  - measure: new_visits
+    type: count_distinct
+    sql: ${visit_id}
     filter:
-      blogpost: yes
-      returning: yes
+      new_visitor: yes
+    hidden: true
   
-  - measure: converted_count
-    type: count
-    filter:
-      converted: yes
+  - measure: returning_visits
+    type: int
+    sql: ${visits} - ${new_visits}
+    hidden: true
   
-  - measure: conversion_rate
-    type: number
-    decimals: 2
-    sql: ${converted_count}/NULLIF(${count},0)::REAL
-  
-  - measure: blogpost_rate
+  - measure: new_visits_ratio
     type: number
     decimals: 0
-    sql: 100*${blogpost_count}/NULLIF(${count},0)::REAL
+    sql: 100*${new_visits}/NULLIF(${visits},0)::REAL
   
-  - measure: returning_rate
+  - measure: returning_visits_ratio
     type: number
     decimals: 0
-    sql: 100*${returning_count}/NULLIF(${blogpost_count},0)::REAL
+    sql: 100*${returning_visits}/NULLIF(${visits},0)::REAL
   
