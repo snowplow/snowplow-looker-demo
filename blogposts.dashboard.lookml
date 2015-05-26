@@ -20,10 +20,10 @@
   title: Snowplow Demo – Blogposts
   layout: grid
   rows:
-    - elements: [blog_source]
-      height: 500
     - elements: [bp_page_views, bp_time_engaged, bp_share_of_entries, bp_percentage_returning]
       height: 250
+    - elements: [blog_source]
+      height: 500
     #- elements: [blog_posts_published]
     #  height: 250
     - elements: [bp_views_over_time, bp_cumulative_views_over_time]
@@ -71,7 +71,7 @@
     font_size: medium
   
   - name: bp_share_of_entries
-    title: Percentage of Entries
+    title: Blogposts % Inbound Traffic
     type: single_value
     model: snowplow_demo
     explore: visits
@@ -127,17 +127,17 @@
     show_null_points: true
   
   
-  - name: blog_posts_published
-    title: New Blogposts
-    type: single_value
-    model: snowplow_demo
-    explore: page_views
-    measures: [page_views.page_count]
-    listen:
-      date: page_views.blog_date_published_date
-    filters:
-      page_views.blogpost: true
-    font_size: medium
+  #- name: blog_posts_published
+  #  title: New Blogposts
+  #  type: single_value
+  #  model: snowplow_demo
+  #  explore: page_views
+  #  measures: [page_views.page_count]
+  #  listen:
+  #    date: page_views.blog_date_published_date
+  #  filters:
+  #    page_views.blogpost: true
+  #  font_size: medium
   
   - name: blog_source
     title: Page Views
