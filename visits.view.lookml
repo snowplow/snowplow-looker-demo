@@ -26,13 +26,13 @@
   
   - dimension: visitor_id
     sql: ${TABLE}.domain_userid
-    hidden: true
+    hidden: true # Used for counting
   
   # Visit identifier
   
   - dimension: visit_id
     sql: ${TABLE}.visit_id
-    hidden: true
+    hidden: true # Used for counting
   
   - dimension: visit
     type: int
@@ -43,6 +43,16 @@
   - dimension: new_visitor
     type: yesno
     sql: ${visit} = 1
+  
+  - dimension: new_versus_returning
+    sql_case:
+      new: ${TABLE}.visit_index = 1
+      returning: ${TABLE}.visit_index > 1
+    html: |
+      <a href='../../dashboards/snowplow_demo/visits?new_versus_returning={{value}}' target='_new'>{{value}}</a>
+      <a href='../../explore/snowplow_demo/visits?fields=visits.timestamp_week,visits.total_visits&f[visits.new_versus_returning]={{value}}&show=vis,data&vis=%7B"type":"looker_area","show_null_points":true,"stacking":"normal","interpolation":"monotone"%7D' target='_new'>
+      <img src='/images/qr-graph-line@2x.png' height=20 width=20></a>
+    hidden: true
   
   # Landing page
   
@@ -62,7 +72,18 @@
     sql: ${TABLE}.landing_page_title
   
   - dimension: landing_page_section
-    sql: ${TABLE}.section_1
+    sql_case:
+      homepage: ${TABLE}.section_1 = 'homepage'
+      blog: ${TABLE}.section_1 = 'blog'
+      analytics: ${TABLE}.section_1 = 'analytics'
+      technology: ${TABLE}.section_1 = 'technology'
+      product: ${TABLE}.section_1 = 'product'
+      pricing: ${TABLE}.section_1 = 'pricing'
+      other: ${TABLE}.section_1 = 'other'
+    html: |
+      <a href='../../dashboards/snowplow_demo/visits?landing_page_section={{value}}' target='_new'>{{value}}</a>
+      <a href='../../explore/snowplow_demo/visits?fields=visits.timestamp_week,visits.total_visits&f[visits.landing_page_section]={{value}}&show=vis,data&vis=%7B"type":"looker_area","show_null_points":true,"stacking":"normal","interpolation":"monotone"%7D' target='_new'>
+      <img src='/images/qr-graph-line@2x.png' height=20 width=20></a>
   
   - dimension: landing_page_is_blogpost
     type: yesno
@@ -73,10 +94,15 @@
   
   # Engagement
   
-  - dimension: total_page_views
+  - dimension: page_views
     type: int
     sql: ${TABLE}.page_views
     hidden: true
+  
+  - dimension: page_views_tier
+    type: tier
+    tiers: [1,2,3,4,5,10,20,50]
+    sql: ${page_views}
   
   - dimension: device_timestamp
     type: time
@@ -116,7 +142,17 @@
     hidden: true
   
   - dimension: referrer_medium
-    sql: ${TABLE}.refr_medium
+    sql_case:
+      internal: ${TABLE}.refr_medium = 'internal'
+      direct: ${TABLE}.refr_medium = 'direct'
+      search: ${TABLE}.refr_medium = 'search'
+      social: ${TABLE}.refr_medium = 'social'
+      email: ${TABLE}.refr_medium = 'email'
+      other: ${TABLE}.refr_medium = 'other'
+    html: |
+      <a href='../../dashboards/snowplow_demo/visits?referrer_medium={{value}}' target='_new'>{{value}}</a>
+      <a href='../../explore/snowplow_demo/visits?fields=visits.timestamp_week,visits.total_visits&f[visits.referrer_medium]={{value}}&show=vis,data&vis=%7B"type":"looker_area","show_null_points":true,"stacking":"normal","interpolation":"monotone"%7D' target='_new'>
+      <img src='/images/qr-graph-line@2x.png' height=20 width=20></a>
   
   - dimension: referrer_source
     sql: ${TABLE}.refr_source
@@ -149,6 +185,20 @@
   
   - dimension: country
     sql: ${TABLE}.geo_country
+  
+  - dimension: top_countries
+    sql_case:
+      US: ${TABLE}.geo_country = 'United States of America'
+      India: ${TABLE}.geo_country = 'India'
+      UK: ${TABLE}.geo_country = 'United Kingdom'
+      Germany: ${TABLE}.geo_country = 'Germany'
+      Australia: ${TABLE}.geo_country = 'Australia'
+      else: 'other'
+    html: |
+      <a href='../../dashboards/snowplow_demo/visits?top_countries={{value}}' target='_new'>{{value}}</a>
+      <a href='../../explore/snowplow_demo/visits?fields=visits.timestamp_week,visits.total_visits&f[visits.top_countries]={{value}}&show=vis,data&vis=%7B"type":"looker_area","show_null_points":true,"stacking":"normal","interpolation":"monotone"%7D' target='_new'>
+      <img src='/images/qr-graph-line@2x.png' height=20 width=20></a>
+    hidden: true
   
   - dimension: country_code_2
     sql: ${TABLE}.geo_country_code_2_characters
@@ -216,13 +266,19 @@
   
   # Basic measures
   
-  - measure: visits
+  - measure: total_visits
     type: count_distinct
     sql: ${visit_id}
     
-  - measure: visitors
+  - measure: total_visitors
     type: count_distinct
     sql: ${visitor_id}
+  
+  # Percentage
+  
+  - measure: percentage_of_total_visits
+    type: percent_of_total
+    sql: ${total_visits}
   
   # New versus returning
   
@@ -235,16 +291,42 @@
   
   - measure: returning_visits
     type: int
-    sql: ${visits} - ${new_visits}
+    sql: ${total_visits} - ${new_visits}
     hidden: true
   
   - measure: new_visits_ratio
     type: number
     decimals: 0
-    sql: 100*${new_visits}/NULLIF(${visits},0)::REAL
+    sql: 100*${new_visits}/NULLIF(${total_visits}, 0)::REAL
   
   - measure: returning_visits_ratio
     type: number
     decimals: 0
-    sql: 100*${returning_visits}/NULLIF(${visits},0)::REAL
+    sql: 100*${returning_visits}/NULLIF(${total_visits}, 0)::REAL
   
+  # Page views
+  
+  - measure: total_page_views
+    type: sum
+    sql: ${page_views}
+  
+  - measure: page_views_per_visit
+    type: number
+    decimals: 2
+    sql: ${total_page_views}/NULLIF(${total_visits}, 0)::REAL
+  
+  # Time engaged
+  
+  - measure: total_time_engaged
+    type: sum
+    sql: ${time_engaged}
+  
+  - measure: total_time_engaged_in_hours
+    type: sum
+    sql: ${time_engaged}/3600
+  
+  - measure: time_engaged_per_visit
+    type: number
+    decimals: 0
+    sql: ${total_time_engaged}/NULLIF(${total_visits}, 0)::REAL
+    
