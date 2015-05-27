@@ -24,6 +24,12 @@
       height: 250
     - elements: [new_versus_returning_pie, referrer_medium_pie, top_countries_pie, landing_section_pie]
       height: 250
+    - elements: [visits_new_versus_returning_area, time_engaged_line]
+      height: 500
+    - elements: [visits_landing_page_section_trend, conversion_rate_trend]
+      height: 500
+    - elements: [top_paths_table, cohort_initial_month]
+      height: 500
   
   filters:
   
@@ -55,6 +61,27 @@
     type: field_filter
     explore: visits
     field: visits.landing_page_section
+  
+  #- name: funnel_referrer
+    #title: Funnel – Referrer Medium
+    #type: field_filter
+    #explore: visits
+    #field: visits.referrer_medium
+    #default_value: 'search'
+    
+  #- name: funnel_section_1
+    #title: Funnel – First section
+    #type: field_filter
+    #explore: visits
+    #field: visits.section_1
+    #default_value: 'blog'
+    
+  #- name: funnel_section_2
+    #title: Funnel – Next Section
+    #type: field_filter
+    #explore: visits
+    #field: visits.section_2
+    #default_value: 'analytics'
   
   elements:
   
@@ -124,6 +151,7 @@
   - name: new_versus_returning_pie
     title: New versus Returning
     type: looker_pie
+    model: snowplow_demo
     explore: visits
     dimensions: visits.new_versus_returning
     measures: visits.total_visits
@@ -137,6 +165,7 @@
   - name: referrer_medium_pie
     title: Referrer Medium
     type: looker_pie
+    model: snowplow_demo
     explore: visits
     dimensions: visits.referrer_medium
     measures: visits.total_visits
@@ -150,6 +179,7 @@
   - name: top_countries_pie
     title: Top Countries
     type: looker_pie
+    model: snowplow_demo
     explore: visits
     dimensions: visits.top_countries
     measures: visits.total_visits
@@ -163,6 +193,7 @@
   - name: landing_section_pie
     title: Landing Pages
     type: looker_pie
+    model: snowplow_demo
     explore: visits
     dimensions: visits.landing_page_section
     measures: visits.total_visits
@@ -172,4 +203,149 @@
       referrer_medium: visits.referrer_medium
       top_countries: visits.top_countries
       landing_page_section: visits.landing_page_section
+  
+  # Trends – Part 1
+  
+  - name: visits_new_versus_returning_area
+    title: New versus Returning
+    type: looker_area
+    model: snowplow_demo
+    explore: visits
+    dimensions: visits.timestamp_week
+    measures: visits.total_visits
+    pivots: visits.new_versus_returning
+    listen:
+      date: visits.timestamp_date
+      new_versus_returning: visits.new_versus_returning
+      referrer_medium: visits.referrer_medium
+      top_countries: visits.top_countries
+      landing_page_section: visits.landing_page_section
+    interpolation: monotone
+    show_null_points: true
+    stacking: normal
+  
+  - name: time_engaged_line
+    title: Time Engaged per Landing Page Section
+    type: looker_line
+    model: snowplow_demo
+    explore: visits
+    dimensions: visits.timestamp_week
+    pivots: visits.landing_page_section_restricted
+    measures: visits.time_engaged_per_visit
+    listen:
+      date: visits.timestamp_date
+      new_versus_returning: visits.new_versus_returning
+      referrer_medium: visits.referrer_medium
+      top_countries: visits.top_countries
+      landing_page_section: visits.landing_page_section
+    interpolation: monotone
+    show_null_points: true
+    stacking: ''
+  
+  # Trends – Part 2
+  
+  - name: visits_landing_page_section_trend
+    title: Visits per Landing Page Section
+    type: looker_area
+    model: snowplow_demo
+    explore: visits
+    dimensions: visits.timestamp_week
+    measures: visits.total_visits
+    pivots: visits.landing_page_section
+    listen:
+      date: visits.timestamp_date
+      new_versus_returning: visits.new_versus_returning
+      referrer_medium: visits.referrer_medium
+      top_countries: visits.top_countries
+      landing_page_section: visits.landing_page_section
+    interpolation: monotone
+    show_null_points: true
+    stacking: normal
+  
+  - name: conversion_rate_trend
+    title: Conversion Rate per Landing Page Section
+    type: looker_line
+    model: snowplow_demo
+    explore: visits
+    dimensions: visits.timestamp_week
+    pivots: visits.landing_page_section_restricted
+    measures: visits.conversion_rate
+    listen:
+      date: visits.timestamp_date
+      new_versus_returning: visits.new_versus_returning
+      referrer_medium: visits.referrer_medium
+      top_countries: visits.top_countries
+      landing_page_section: visits.landing_page_section
+    interpolation: monotone
+    show_null_points: true
+    stacking: ''
+  
+  # Paths
+  
+  - name: top_paths_table
+    title: Top Paths
+    type: table
+    model: snowplow_demo
+    explore: visits
+    dimensions: [visits.path_2]
+    measures: [visits.total_visits, visits.conversion_rate]
+    filters:
+      visits.total_sections: '>1'
+    listen:
+      date: visits.timestamp_date
+      new_versus_returning: visits.new_versus_returning
+      referrer_medium: visits.referrer_medium
+      top_countries: visits.top_countries
+      landing_page_section: visits.landing_page_section
+    sorts: visits.total_visits desc
+    limit: 15
+  
+  # Cohort analysis
+  
+  - name: cohort_initial_month
+    title: Basic Cohort Analysis
+    type: looker_area
+    model: snowplow_demo
+    explore: visits
+    dimensions: [visitors.timestamp_month, visits.timestamp_week]
+    pivots: [visitors.timestamp_month]
+    measures: [visits.total_visits]
+    sorts: [visits.timestamp_week desc, visitors.timestamp_month]
+    show_null_points: true
+    stacking: normal #percent
+    interpolation: monotone
+    show_null_points: true
+  
+  # Funnel
+  
+  #- name: conversion_funnel
+  #  title: Funnel
+  #  type: looker_column
+  #  model: snowplow_demo
+  #  explore: visits
+  #  measures: [funnel.event_1_count_sessions, funnel.event_2_count_sessions, funnel.event_3_count_sessions,
+  #    funnel.event_4_count_sessions]
+  #  listen:
+  #    funnel_referrer: visits.referrer_medium
+  #    funnel_section_1: visits.
+  #    funnel_section_2: page_views.event_3
+    #show_dropoff: true
+    #show_value_labels: true
+    #show_view_names: true
+    #show_null_labels: false
+    #y_axis_gridlines: true
+    #show_y_axis_labels: true
+    #show_y_axis_ticks: true
+    #y_axis_combined: true
+    #y_axis_labels: [Count Sessions]
+    #x_axis_gridlines: false
+    #show_x_axis_label: true
+    #show_x_axis_ticks: true
+    #series_labels:
+      #funnel.event_1_count_sessions: Event 1
+      #funnel.event_2_count_sessions: Event 2
+      #funnel.event_3_count_sessions: Event 3
+      #funnel.event_4_count_sessions: Event 4
+    #stacking: ''
+    #x_axis_scale: auto
   

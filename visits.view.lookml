@@ -85,6 +85,13 @@
       <a href='../../explore/snowplow_demo/visits?fields=visits.timestamp_week,visits.total_visits&f[visits.landing_page_section]={{value}}&show=vis,data&vis=%7B"type":"looker_area","show_null_points":true,"stacking":"normal","interpolation":"monotone"%7D' target='_new'>
       <img src='/images/qr-graph-line@2x.png' height=20 width=20></a>
   
+  - dimension: landing_page_section_restricted # Used in dashboard plots
+    sql_case:
+      homepage: ${TABLE}.section_1 = 'homepage'
+      blog: ${TABLE}.section_1 = 'blog'
+      analytics: ${TABLE}.section_1 = 'analytics'
+    hidden: true
+  
   - dimension: landing_page_is_blogpost
     type: yesno
     sql: ${TABLE}.landing_page_blogpost
@@ -248,7 +255,7 @@
   
   - dimension: path_2
     sql: ${TABLE}.path_2
-    hidden: true
+    #hidden: true
   
   - dimension: path_3
     sql: ${TABLE}.path_3
@@ -261,6 +268,13 @@
   - dimension: path_5
     sql: ${TABLE}.path_5
     hidden: true
+  
+  # Conversion
+  
+  - dimension: visitor_converted
+    type: yesno
+    sql: ${TABLE}.time_engaged_with_product_pricing > 0
+    hidden: false
   
   # MEASURES #
   
@@ -329,4 +343,18 @@
     type: number
     decimals: 0
     sql: ${total_time_engaged}/NULLIF(${total_visits}, 0)::REAL
-    
+  
+  # Conversion
+  
+  - measure: converted_visits
+    type: count_distinct
+    sql: ${visit_id}
+    filter:
+      visitor_converted: yes
+    hidden: true
+  
+  - measure: conversion_rate
+    type: number
+    decimals: 0
+    sql: 100*${converted_visits}/NULLIF(${total_visits}, 0)::REAL
+  

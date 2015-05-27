@@ -16,17 +16,21 @@
 # Data Model: Demo
 # Version: 1.0.0
 
-- connection: snowplow_demo
-
-- scoping: true                  # for backward compatibility
-- include: '*.view.lookml'       # include all views
-- include: '*.dashboard.lookml'  # include all dashboards
-
-- explore: page_views
-
-- explore: visits
-  joins: 
-  - join: visitors
-    sql_on: |
-      visits.domain_userid = visitors.domain_userid
-    relationship: many_to_one
+- view: visitors
+  sql_table_name: derived.visitors
+  fields:
+  
+  # DIMENSIONS #
+  
+  # Visitor identifier
+  
+  - dimension: visitor_id
+    sql: ${TABLE}.domain_userid
+    hidden: true # Used for counting
+  
+  # Engagement
+  
+  - dimension: timestamp
+    type: time
+    timeframes: [time, hour, date, week, month]
+    sql: ${TABLE}.first_touch_tstamp
