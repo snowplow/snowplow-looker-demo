@@ -290,6 +290,22 @@
     sql: ${TABLE}.time_engaged_with_product_pricing > 0
     hidden: false
   
+  # Bounce
+  
+  - dimension: page_view_count
+    type: int
+    sql: ${TABLE}.page_view_count
+    hidden: true
+  
+  - dimension: page_ping_count
+    type: int
+    sql: ${TABLE}.page_ping_count
+    hidden: true
+  
+  - dimension: visitor_bounced
+    type: yesno
+    sql: ${TABLE}.page_view_count + ${TABLE}.page_ping_count < 2
+  
   # MEASURES #
   
   # Basic measures
@@ -374,5 +390,20 @@
     type: number
     decimals: 0
     sql: 100*${converted_visits}/NULLIF(${total_visits}, 0)::REAL
+    value_format: '0"%"'
+  
+  # Bounce
+  
+  - measure: bounced_visits
+    type: count_distinct
+    sql: ${visit_id}
+    filter:
+      visitor_bounced: yes
+    hidden: true
+  
+  - measure: bounce_rate
+    type: number
+    decimals: 0
+    sql: 100*${bounced_visits}/NULLIF(${total_visits}, 0)::REAL
     value_format: '0"%"'
   
