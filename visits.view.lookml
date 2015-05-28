@@ -98,7 +98,7 @@
   
   - dimension: landing_page_is_blogpost
     type: yesno
-    sql: ${TABLE}.landing_page_blogpost
+    sql: ${TABLE}.landing_blogpost
   
   - dimension: landing_page_blog_breadcrumb
     sql: ${TABLE}.landing_blog_breadcrumb
@@ -269,7 +269,7 @@
   
   - dimension: path_2
     sql: ${TABLE}.path_2
-    #hidden: true
+    hidden: true
   
   - dimension: path_3
     sql: ${TABLE}.path_3

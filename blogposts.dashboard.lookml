@@ -20,7 +20,7 @@
   title: Snowplow Demo – Blogposts
   layout: grid
   rows:
-    - elements: [bp_page_views, bp_time_engaged, bp_share_of_entries, bp_percentage_returning]
+    - elements: [bp_page_views, bp_time_engaged] # bp_share_of_entries, bp_percentage_returning
       height: 250
     - elements: [blog_source]
       height: 500
@@ -70,27 +70,27 @@
     value_format: '#,##0"h"'
     font_size: medium
   
-  - name: bp_share_of_entries
-    title: Blogposts % Inbound Traffic
-    type: single_value
-    model: snowplow_demo
-    explore: visits
-    measures: visits.blogpost_rate
-    listen:
-      date: visits.first_touch_date
-    value_format: '0"%"'
-    font_size: medium
+  #- name: bp_share_of_entries
+  #  title: Blogposts % Inbound Traffic
+  #  type: single_value
+  #  model: snowplow_demo
+  #  explore: visits
+  #  measures: visits.blogpost_rate
+  #  listen:
+  #    date: visits.first_touch_date
+  #  value_format: '0"%"'
+  #  font_size: medium
   
-  - name: bp_percentage_returning
-    title: Percentage of Returning Visitors
-    type: single_value
-    model: snowplow_demo
-    explore: visits
-    measures: visits.returning_rate
-    listen:
-      date: visits.first_touch_date
-    value_format: '0"%"'
-    font_size: medium
+  #- name: bp_percentage_returning
+  #  title: Percentage of Returning Visitors
+  #  type: single_value
+  #  model: snowplow_demo
+  #  explore: visits
+  #  measures: visits.returning_rate
+  #  listen:
+  #    date: visits.first_touch_date
+  #  value_format: '0"%"'
+  #  font_size: medium
   
   # Page views 
   
@@ -178,11 +178,11 @@
     type: table
     model: snowplow_demo
     explore: visits
-    dimensions: visits.path
-    measures: [visits.count, visits.percent_of_total]
+    dimensions: visits.path_2
+    measures: [visits.total_visits]
     filters:
-      visits.blogpost: true
-    sorts: visits.count desc
+      visits.landing_page_is_blogpost: true
+    sorts: visits.total_visits desc
 
   - name: bp_top_posts
     title: Top Posts
