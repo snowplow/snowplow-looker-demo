@@ -353,6 +353,13 @@
     filters:
       link_clicks.github_snowplow: 'No'
       link_clicks.internal: 'No'
+    listen:
+      date: link_clicks.timestamp_date
+      # new_versus_returning: visits.new_versus_returning
+      # referrer_medium: visits.referrer_medium
+      # top_countries: visits.top_countries
+      # landing_page_section: visits.landing_page_section
+      # visitor_bounced: visits.visitor_bounced
     sorts: link_clicks.count desc
     limit: 15
   

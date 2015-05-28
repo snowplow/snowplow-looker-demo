@@ -32,6 +32,8 @@
       height: 350
     - elements: [bp_top_posts]
       height: 350
+    - elements: [bp_authors]
+      height: 500
   
   filters:
   
@@ -194,5 +196,17 @@
     filters:
       page_views.blogpost: true
     limit: 10
+    sorts: page_views.count desc
+  
+  - name: bp_authors
+    title: Authors
+    type: table
+    model: snowplow_demo
+    explore: page_views
+    dimensions: page_views.blog_author
+    measures: [page_views.count, page_views.total_time_engaged_in_hours]
+    filters:
+      page_views.blogpost: true
+    limit: 15
     sorts: page_views.count desc
   
