@@ -16,19 +16,31 @@
 # Data Model: Demo
 # Version: 1.0.0
 
-- connection: snowplow_demo
-
-- scoping: true                  # for backward compatibility
-- include: '*.view.lookml'       # include all views
-- include: '*.dashboard.lookml'  # include all dashboards
-
-- explore: page_views
-
-- explore: visits
-  joins: 
-  - join: visitors
-    sql_on: |
-      visits.domain_userid = visitors.domain_userid
-    relationship: many_to_one
-
-- explore: link_clicks
+- view: link_clicks
+  sql_table_name: derived.link_clicks
+  fields:
+  
+  # DIMENSIONS #
+  
+  - dimension: visitor_id
+    sql: ${TABLE}.domain_userid
+    hidden: true # Used for counting
+  
+  - dimension: timestamp
+    type: time
+    timeframes: [time, hour, date, week, month]
+    sql: ${TABLE}.collector_tstamp
+  
+  - dimension: target_host
+    sql: ${TABLE}.link_target_url_host
+  
+  - dimension: internal
+    type: yesno
+    sql: ${TABLE}.link_target_is_internal_click
+  
+  - dimension: github_snowplow
+    type: yesno
+    sql: ${TABLE}.link_target_is_github_snowplow
+  
+  - measure: count
+    type: count

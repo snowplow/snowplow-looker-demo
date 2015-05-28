@@ -30,6 +30,8 @@
       height: 500
     - elements: [top_paths_table, visits_first_visit_segment]
       height: 500
+    - elements: [top_link_clicks_table]
+      height: 500
   
   filters:
   
@@ -285,7 +287,7 @@
     limit: 15
   
   - name: visits_first_visit_segment
-    title: Segmentation — First Visit
+    title: Segmentation – First Visit
     type: looker_area
     model: snowplow_demo
     explore: visits
@@ -295,4 +297,19 @@
     sorts: [visits.timestamp_week desc, visitors.timestamp_month]
     show_null_points: true
     stacking: normal
+  
+  # Row 6 – Link clicks and bounce rate
+  
+  - name: top_link_clicks_table
+    title: Non-Snowplow Link Clicks
+    type: table
+    model: snowplow_demo
+    explore: link_clicks
+    dimensions: link_clicks.target_host
+    measures: link_clicks.count
+    filters:
+      link_clicks.github_snowplow: 'No'
+      link_clicks.internal: 'No'
+    sorts: link_clicks.count desc
+    limit: 15
   
