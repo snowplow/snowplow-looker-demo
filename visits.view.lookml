@@ -44,7 +44,7 @@
     type: yesno
     sql: ${visit} = 1
   
-  - dimension: new_versus_returning
+  - dimension: new_versus_returning # Used in dashboard
     sql_case:
       new: ${TABLE}.visit_index = 1
       returning: ${TABLE}.visit_index > 1
@@ -80,16 +80,20 @@
       product: ${TABLE}.section_1 = 'product'
       pricing: ${TABLE}.section_1 = 'pricing'
       other: ${TABLE}.section_1 = 'other'
-    html: |
-      <a href='../../dashboards/snowplow_demo/visits?landing_page_section={{value}}' target='_new'>{{value}}</a>
-      <a href='../../explore/snowplow_demo/visits?fields=visits.timestamp_week,visits.total_visits&f[visits.landing_page_section]={{value}}&show=vis,data&vis=%7B"type":"looker_area","show_null_points":true,"stacking":"normal","interpolation":"monotone"%7D' target='_new'>
-      <img src='/images/qr-graph-line@2x.png' height=20 width=20></a>
   
-  - dimension: landing_page_section_restricted # Used in dashboard plots
+  - dimension: landing_page_section_html # Used in dashboard
     sql_case:
       homepage: ${TABLE}.section_1 = 'homepage'
       blog: ${TABLE}.section_1 = 'blog'
       analytics: ${TABLE}.section_1 = 'analytics'
+      technology: ${TABLE}.section_1 = 'technology'
+      product: ${TABLE}.section_1 = 'product'
+      pricing: ${TABLE}.section_1 = 'pricing'
+      other: ${TABLE}.section_1 = 'other'
+    html: |
+      <a href='../../dashboards/snowplow_demo/visits?landing_page_section={{value}}' target='_new'>{{value}}</a>
+      <a href='../../explore/snowplow_demo/visits?fields=visits.timestamp_week,visits.total_visits&f[visits.landing_page_section]={{value}}&show=vis,data&vis=%7B"type":"looker_area","show_null_points":true,"stacking":"normal","interpolation":"monotone"%7D' target='_new'>
+      <img src='/images/qr-graph-line@2x.png' height=20 width=20></a>
     hidden: true
   
   - dimension: landing_page_is_blogpost
@@ -156,10 +160,20 @@
       social: ${TABLE}.refr_medium = 'social'
       email: ${TABLE}.refr_medium = 'email'
       other: ${TABLE}.refr_medium = 'other'
+  
+  - dimension: referrer_medium_html # Used in dashboard
+    sql_case:
+      internal: ${TABLE}.refr_medium = 'internal'
+      direct: ${TABLE}.refr_medium = 'direct'
+      search: ${TABLE}.refr_medium = 'search'
+      social: ${TABLE}.refr_medium = 'social'
+      email: ${TABLE}.refr_medium = 'email'
+      other: ${TABLE}.refr_medium = 'other'
     html: |
       <a href='../../dashboards/snowplow_demo/visits?referrer_medium={{value}}' target='_new'>{{value}}</a>
       <a href='../../explore/snowplow_demo/visits?fields=visits.timestamp_week,visits.total_visits&f[visits.referrer_medium]={{value}}&show=vis,data&vis=%7B"type":"looker_area","show_null_points":true,"stacking":"normal","interpolation":"monotone"%7D' target='_new'>
       <img src='/images/qr-graph-line@2x.png' height=20 width=20></a>
+    hidden: true
   
   - dimension: referrer_source
     sql: ${TABLE}.refr_source
@@ -193,7 +207,7 @@
   - dimension: country
     sql: ${TABLE}.geo_country
   
-  - dimension: top_countries
+  - dimension: top_countries # Used in dashboard
     sql_case:
       US: ${TABLE}.geo_country = 'United States of America'
       India: ${TABLE}.geo_country = 'India'
@@ -283,7 +297,7 @@
   - measure: total_visits
     type: count_distinct
     sql: ${visit_id}
-    
+  
   - measure: total_visitors
     type: count_distinct
     sql: ${visitor_id}
@@ -312,11 +326,13 @@
     type: number
     decimals: 0
     sql: 100*${new_visits}/NULLIF(${total_visits}, 0)::REAL
+    value_format: '0"%"'
   
   - measure: returning_visits_ratio
     type: number
     decimals: 0
     sql: 100*${returning_visits}/NULLIF(${total_visits}, 0)::REAL
+    value_format: '0"%"'
   
   # Page views
   
@@ -343,6 +359,7 @@
     type: number
     decimals: 0
     sql: ${total_time_engaged}/NULLIF(${total_visits}, 0)::REAL
+    value_format: '#,##0"s"'
   
   # Conversion
   
@@ -357,4 +374,5 @@
     type: number
     decimals: 0
     sql: 100*${converted_visits}/NULLIF(${total_visits}, 0)::REAL
+    value_format: '0"%"'
   
