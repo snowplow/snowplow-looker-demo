@@ -28,7 +28,7 @@
       height: 500
     - elements: [visits_landing_page_trend, conversion_rate_landing_page_trend]
       height: 500
-    - elements: [visits_first_visit_segment, bounce_rate_landing_page_trend]
+    - elements: [visits_first_visit_cohort, bounce_rate_landing_page_trend]
       height: 500
     - elements: [top_paths_table, top_link_clicks_table]
       height: 500
@@ -288,8 +288,8 @@
   
   # Row 5 – Segmentation and bounce rate
   
-  - name: visits_first_visit_segment
-    title: Segmentation – First Visit
+  - name: visits_first_visit_cohort
+    title: Cohorts – First Visit
     type: looker_area
     model: snowplow_demo
     explore: visits
