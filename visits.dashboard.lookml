@@ -24,6 +24,8 @@
       height: 250
     - elements: [new_versus_returning_pie, referrer_medium_pie, landing_page_pie, top_countries_pie]
       height: 250
+    - elements: [visits_map]
+      height: 500
     - elements: [visits_new_versus_returning_trend, time_engaged_per_landing_page_trend]
       height: 500
     - elements: [visits_landing_page_trend, conversion_rate_landing_page_trend]
@@ -41,6 +43,18 @@
     title: Date
     type: date_filter
     default_value: 12 Weeks
+  
+  - name: visitor_bounced
+    title: Visit Bounced
+    type: field_filter
+    explore: visits
+    field: visits.visitor_bounced
+  
+  - name: visit_segment
+    title: Visit Segment
+    type: field_filter
+    explore: visits
+    field: visits.segment
   
   - name: new_versus_returning
     title: New versus Returning
@@ -66,12 +80,6 @@
     explore: visits
     field: visits.top_countries
   
-  - name: visitor_bounced
-    title: Visitor Bounced
-    type: field_filter
-    explore: visits
-    field: visits.visitor_bounced
-  
   elements:
   
   # Row 1 – Basic metrics
@@ -89,6 +97,7 @@
       top_countries: visits.top_countries
       landing_page_section: visits.landing_page_section
       visitor_bounced: visits.visitor_bounced
+      visit_segment: visits.segment
     value_format: '[>=1000000] #,##0.0,,"M";[<1000] 0;#,##0.0,"k"'
     font_size: medium
   
@@ -105,6 +114,7 @@
       top_countries: visits.top_countries
       landing_page_section: visits.landing_page_section
       visitor_bounced: visits.visitor_bounced
+      visit_segment: visits.segment
     value_format: '[>=1000000] #,##0.0,,"M";[<1000] 0;#,##0.0,"k"'
     font_size: medium
   
@@ -121,6 +131,7 @@
       top_countries: visits.top_countries
       landing_page_section: visits.landing_page_section
       visitor_bounced: visits.visitor_bounced
+      visit_segment: visits.segment
     font_size: medium
   
   - name: time_engaged_per_visit
@@ -136,6 +147,7 @@
       top_countries: visits.top_countries
       landing_page_section: visits.landing_page_section
       visitor_bounced: visits.visitor_bounced
+      visit_segment: visits.segment
     font_size: medium
   
   # Row 2 – Pie charts
@@ -154,6 +166,7 @@
       top_countries: visits.top_countries
       landing_page_section: visits.landing_page_section
       visitor_bounced: visits.visitor_bounced
+      visit_segment: visits.segment
   
   - name: referrer_medium_pie
     title: Referrer Medium
@@ -169,6 +182,7 @@
       top_countries: visits.top_countries
       landing_page_section: visits.landing_page_section
       visitor_bounced: visits.visitor_bounced
+      visit_segment: visits.segment
   
   - name: landing_page_pie
     title: Landing Page
@@ -184,6 +198,7 @@
       top_countries: visits.top_countries
       landing_page_section: visits.landing_page_section
       visitor_bounced: visits.visitor_bounced
+      visit_segment: visits.segment
   
   - name: top_countries_pie
     title: Country
@@ -199,8 +214,27 @@
       top_countries: visits.top_countries
       landing_page_section: visits.landing_page_section
       visitor_bounced: visits.visitor_bounced
+      visit_segment: visits.segment
   
-  # Row 3 – Trends
+  # Row 3 — Map
+  
+  - name: visits_map
+    title: Visits – Worldmap
+    type: looker_geo_choropleth
+    map: world
+    explore: visits
+    dimensions: visits.country_code_3
+    measures: visits.total_visits
+    listen:
+      date: visits.timestamp_date
+      new_versus_returning: visits.new_versus_returning
+      referrer_medium: visits.referrer_medium
+      top_countries: visits.top_countries
+      landing_page_section: visits.landing_page_section
+      visitor_bounced: visits.visitor_bounced
+      visit_segment: visits.segment
+  
+  # Row 4 – Trends
   
   - name: visits_new_versus_returning_trend
     title: Visits – New versus Returning
@@ -217,6 +251,7 @@
       top_countries: visits.top_countries
       landing_page_section: visits.landing_page_section
       visitor_bounced: visits.visitor_bounced
+      visit_segment: visits.segment
     interpolation: monotone
     show_null_points: true
     stacking: normal
@@ -238,12 +273,13 @@
       # landing_page_section: visits.landing_page_section
       top_countries: visits.top_countries
       visitor_bounced: visits.visitor_bounced
+      # visit_segment: visits.segment
     sorts: [visits.timestamp_week desc]
     interpolation: monotone
     show_null_points: true
     stacking: ''
   
-  # Row 4 – Trends
+  # Row 5 – Trends
   
   - name: visits_landing_page_trend
     title: Vistis – Landing Page
@@ -260,6 +296,7 @@
       top_countries: visits.top_countries
       # landing_page_section: visits.landing_page_section
       visitor_bounced: visits.visitor_bounced
+      # visit_segment: visits.segment
     interpolation: monotone
     show_null_points: true
     stacking: normal
@@ -281,15 +318,16 @@
       # landing_page_section: visits.landing_page_section
       top_countries: visits.top_countries
       visitor_bounced: visits.visitor_bounced
+      # visit_segment: visits.segment
     sorts: [visits.timestamp_week desc]
     interpolation: monotone
     show_null_points: true
     stacking: ''
   
-  # Row 5 – Segmentation and bounce rate
+  # Row 6 – Segmentation and bounce rate
   
   - name: visits_first_visit_cohort
-    title: Cohorts – First Visit
+    title: Cohorts – Retention per First Visit
     type: looker_area
     model: snowplow_demo
     explore: visits
@@ -317,12 +355,13 @@
       # landing_page_section: visits.landing_page_section
       top_countries: visits.top_countries
       # visitor_bounced: visits.visitor_bounced
+      # visit_segment: visits.segment
     sorts: [visits.timestamp_week desc]
     interpolation: monotone
     show_null_points: true
     stacking: ''
   
-  # Row 6 – Paths and link clicks
+  # Row 7 – Paths and link clicks
   
   - name: top_paths_table
     title: Conversion Rate per Landing Page & Next Section
@@ -340,6 +379,7 @@
       top_countries: visits.top_countries
       landing_page_section: visits.landing_page_section
       visitor_bounced: visits.visitor_bounced
+      visit_segment: visits.segment
     sorts: visits.total_visits desc
     limit: 15
   
@@ -360,10 +400,11 @@
       # top_countries: visits.top_countries
       # landing_page_section: visits.landing_page_section
       # visitor_bounced: visits.visitor_bounced
+      # visit_segment: visits.segment
     sorts: link_clicks.count desc
     limit: 15
   
-  # Row 7 – Bounce rates
+  # Row 8 – Bounce rates
   
   - name: top_bounce_pages_table
     title: Bounce Rate per Landing Page
@@ -381,6 +422,7 @@
       top_countries: visits.top_countries
       landing_page_section: visits.landing_page_section
       # visitor_bounced: visits.visitor_bounced
+      visit_segment: visits.segment
     sorts: visits.bounce_rate desc
     limit: 15
   

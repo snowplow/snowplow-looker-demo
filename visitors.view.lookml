@@ -34,3 +34,11 @@
     type: time
     timeframes: [time, hour, date, week, month]
     sql: ${TABLE}.first_touch_tstamp
+  
+  # Segment
+  
+  - dimension: segment
+    sql_case:
+      Looking for Snowplow details: ${TABLE}.segment = 'Looking for Snowplow details'
+      Looking for Snowplow documentation: ${TABLE}.segment = 'Looking for Snowplow documentation'
+      Looking for something else: ${TABLE}.segment = 'Looking for something else'
