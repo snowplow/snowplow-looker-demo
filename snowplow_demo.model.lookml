@@ -24,12 +24,18 @@
 
 - explore: page_views
 
+- explore: events
+
 - explore: visits
   joins: 
   - join: visitors
     sql_on: |
       visits.domain_userid = visitors.domain_userid
     relationship: many_to_one
+  #- join: events
+  #  sql_on: |
+  #    visits.domain_userid = events.domain_userid
+  #  relationship: one_to_many
   #- join: page_views
   #  sql_on: |
   #    visits.domain_userid = page_views.domain_userid
