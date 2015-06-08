@@ -30,5 +30,10 @@
     sql_on: |
       visits.domain_userid = visitors.domain_userid
     relationship: many_to_one
+  #- join: page_views
+  #  sql_on: |
+  #    visits.domain_userid = page_views.domain_userid
+  #    AND visits.visit_index = page_views.visit_index
+  #  relationship: one_to_many
 
 - explore: link_clicks

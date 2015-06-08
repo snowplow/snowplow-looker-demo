@@ -321,10 +321,26 @@
   - measure: total_visits
     type: count_distinct
     sql: ${visit_id}
+    drill_fields:
+      - visitor_id
+      - visit
+      - new_visitor
+      - visitor_bounced
+      - landing_page_section
+      - referrer_medium
+      - country
+      - path_5
+      - page_views
+      - time_engaged
   
   - measure: total_visitors
     type: count_distinct
     sql: ${visitor_id}
+    drill_fields:
+      - timestamp_date
+      - total_visitors
+      - page_views_per_visit
+      - time_engaged_per_visit
   
   # Percentage
   
@@ -368,6 +384,11 @@
     type: number
     decimals: 2
     sql: ${total_page_views}/NULLIF(${total_visits}, 0)::REAL
+    drill_fields:
+      - landing_page_path
+      - landing_page_section
+      - total_visits
+      - page_views_per_visit
   
   # Time engaged
   
@@ -384,6 +405,11 @@
     decimals: 0
     sql: ${total_time_engaged}/NULLIF(${total_visits}, 0)::REAL
     value_format: '#,##0"s"'
+    drill_fields:
+      - landing_page_path
+      - landing_page_section
+      - total_visits
+      - time_engaged_per_visit
   
   # Conversion
   
@@ -414,4 +440,6 @@
     decimals: 0
     sql: 100*${bounced_visits}/NULLIF(${total_visits}, 0)::REAL
     value_format: '0"%"'
+  
+  # DRILL FIELDS #
   

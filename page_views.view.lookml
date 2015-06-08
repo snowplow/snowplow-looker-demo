@@ -156,3 +156,9 @@
     decimals: 2
     sql: ${total_time_engaged}/3600
   
+  - measure: time_engaged_per_visit
+    type: number
+    decimals: 0
+    sql: ${total_time_engaged}/NULLIF(${visit_count}, 0)::REAL
+    value_format: '#,##0"s"'
+  
