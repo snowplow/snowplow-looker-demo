@@ -24,7 +24,7 @@
       height: 250
     - elements: [new_versus_returning_pie, referrer_medium_pie, landing_page_pie, top_countries_pie]
       height: 250
-    - elements: [visits_map]
+    - elements: [visits_map, visits_per_visitor_segment]
       height: 500
     - elements: [visits_new_versus_returning_trend, time_engaged_per_landing_page_trend]
       height: 500
@@ -233,6 +233,26 @@
       landing_page_section: visits.landing_page_section
       visitor_bounced: visits.visitor_bounced
       visit_segment: visits.segment
+
+  - name: visits_per_visitor_segment
+    title: Visits – Visitor Segment
+    type: looker_area
+    model: snowplow_demo
+    explore: visits
+    dimensions: visits.timestamp_week
+    measures: visits.total_visits
+    pivots: visitors.segment
+    listen:
+      date: visits.timestamp_date
+      # new_versus_returning: visits.new_versus_returning
+      referrer_medium: visits.referrer_medium
+      top_countries: visits.top_countries
+      landing_page_section: visits.landing_page_section
+      visitor_bounced: visits.visitor_bounced
+      visit_segment: visits.segment
+    interpolation: monotone
+    show_null_points: true
+    stacking: normal
   
   # Row 4 – Trends
   

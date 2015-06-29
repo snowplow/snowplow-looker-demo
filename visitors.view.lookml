@@ -30,6 +30,11 @@
   
   # Engagement
   
+  - dimension: time_engaged
+    type: int
+    sql: ${TABLE}.time_engaged_in_seconds
+    hidden: true
+  
   - dimension: timestamp
     type: time
     timeframes: [time, hour, date, week, month]
@@ -42,3 +47,23 @@
       Looking for Snowplow details: ${TABLE}.segment = 'Looking for Snowplow details'
       Looking for Snowplow documentation: ${TABLE}.segment = 'Looking for Snowplow documentation'
       Looking for something else: ${TABLE}.segment = 'Looking for something else'
+  
+  # MEASURES #
+  
+  - measure: total_visitors
+    type: count_distinct
+    sql: ${visitor_id}
+
+  - measure: total_time_engaged
+    type: sum
+    sql: ${time_engaged}
+  
+  - measure: total_time_engaged_in_hours
+    type: sum
+    sql: ${time_engaged}/3600
+  
+  - measure: time_engaged_per_visitor
+    type: number
+    decimals: 0
+    sql: ${total_time_engaged}/NULLIF(${total_visitors}, 0)::REAL
+    value_format: '#,##0"s"'
