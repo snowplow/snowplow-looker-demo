@@ -42,7 +42,7 @@
   - name: date
     title: Date
     type: date_filter
-    default_value: 12 Weeks
+    default_value: 24 Weeks
   
   - name: visitor_bounced
     title: Visit Bounced
