@@ -348,15 +348,8 @@
 
   # ----- Sets of fields for drilling ------
   sets:
-    detail:
-    - geo_region_name
-    - br_name
-    - os_name
-    - sign_up_name
-    - trial_name
-    - events.event_id
-    - events.geo_region_name
-    - events.ti_name
-    - events.br_name
-    - events.os_name
-
+    event_detail:
+    - dvce_tstamp_time
+    - event
+    - page_urlhost
+    - page_urlpath

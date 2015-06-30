@@ -48,11 +48,21 @@
       Looking for Snowplow documentation: ${TABLE}.segment = 'Looking for Snowplow documentation'
       Looking for something else: ${TABLE}.segment = 'Looking for something else'
   
+  # Event stream
+  
+  - dimension: event_stream # Links to all events of visitor
+    sql: ${visitor_id}
+    html: |
+      <a href=events?fields=events.event_detail*&f[events.session_id]={{value}}>Event Stream</a>
+  
   # MEASURES #
   
   - measure: total_visitors
     type: count_distinct
     sql: ${visitor_id}
+    drill_fields:
+      - visitor_id
+      - event_stream
 
   - measure: total_time_engaged
     type: sum

@@ -316,6 +316,13 @@
     type: yesno
     sql: ${TABLE}.page_view_count + ${TABLE}.page_ping_count < 2
   
+  # Event stream
+  
+  - dimension: event_stream # Links to all events of visitor
+    sql: ${visitor_id}
+    html: |
+      <a href=events?fields=events.event_detail*&f[events.session_id]={{value}}>Event Stream</a>
+  
   # MEASURES #
   
   # Basic measures
@@ -334,6 +341,7 @@
       - path_5
       - page_views
       - time_engaged
+      - event_stream
   
   - measure: total_visitors
     type: count_distinct
@@ -343,6 +351,7 @@
       - total_visitors
       - page_views_per_visit
       - time_engaged_per_visit
+      - event_stream
   
   # Percentage
   
