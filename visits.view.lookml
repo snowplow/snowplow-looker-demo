@@ -17,7 +17,7 @@
 # Version: 1.0.0
 
 - view: visits
-  sql_table_name: derived.visits
+  sql_table_name: demo.visits
   fields:
   
   # DIMENSIONS #
@@ -27,7 +27,7 @@
   - dimension: visitor_id
     sql: ${TABLE}.domain_userid
     html: |
-      <a href='../../explore/snowplow_demo/events?fields=events.collector_tstamp_time,events.dvce_tstamp_time,events.event,events.event_id,events.domain_userid,events.domain_sessionidx,events.geo_country,events.geo_region,events.geo_city,events.geo_region_name,events.page_url,events.page_title,events.page_referrer,events.page_urlhost,events.page_urlpath,events.refr_urlhost,events.refr_urlpath,events.refr_medium,events.refr_source,events.refr_term,events.mkt_medium,events.mkt_source,events.mkt_term,events.mkt_content,events.mkt_campaign,events.pp_xoffset_min,events.pp_xoffset_max,events.pp_yoffset_min,events.pp_yoffset_max,events.br_name,events.br_viewwidth,events.br_viewheight,events.os_name,events.os_family,events.dvce_type,events.dvce_ismobile,events.dvce_screenwidth,events.dvce_screenheight,events.doc_width,events.doc_height,events.link_element_id,events.link_element_classes,events.link_element_target,events.link_target_url,events.w3_breadcrumb,events.w3_genre,events.w3_author,events.w3_navigation_start,events.w3_redirect_start,events.w3_redirect_end&f[events.domain_userid]={{value}}&show=data' target='_new'>{{value}}</a>
+      <a href='../../explore/snowplow_demo/events?fields=events.collector_tstamp_time,events.dvce_created_tstamp_time,events.event,events.event_id,events.domain_userid,events.domain_sessionidx,events.geo_country,events.geo_region,events.geo_city,events.geo_region_name,events.page_url,events.page_title,events.page_referrer,events.page_urlhost,events.page_urlpath,events.refr_urlhost,events.refr_urlpath,events.refr_medium,events.refr_source,events.refr_term,events.mkt_medium,events.mkt_source,events.mkt_term,events.mkt_content,events.mkt_campaign,events.pp_xoffset_min,events.pp_xoffset_max,events.pp_yoffset_min,events.pp_yoffset_max,events.br_name,events.br_viewwidth,events.br_viewheight,events.os_name,events.os_family,events.dvce_type,events.dvce_ismobile,events.dvce_screenwidth,events.dvce_screenheight,events.doc_width,events.doc_height,events.link_element_id,events.link_element_classes,events.link_element_target,events.link_target_url,events.w3_breadcrumb,events.w3_genre,events.w3_author,events.w3_navigation_start,events.w3_redirect_start,events.w3_redirect_end&f[events.domain_userid]={{value}}&show=data' target='_new'>{{value}}</a>
     hidden: true # Used for counting
   
   # Visit identifier
@@ -125,13 +125,13 @@
     tiers: [1,2,3,4,5,10,20,50]
     sql: ${page_views}
   
-  - dimension: device_timestamp
+  - dimension: device_created_timestamp
     type: time
     timeframes: [time_of_day, hour_of_day, day_of_week] # Relative
-    sql: ${TABLE}.min_dvce_tstamp
+    sql: ${TABLE}.min_dvce_created_tstamp
   
-  - dimension: max_dvce_tstamp
-    sql: ${TABLE}.max_dvce_tstamp
+  - dimension: max_dvce_created_tstamp
+    sql: ${TABLE}.max_dvce_created_tstamp
     hidden: true
   
   - dimension: timestamp

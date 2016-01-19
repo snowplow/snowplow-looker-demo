@@ -17,7 +17,7 @@
 # Version: 1.0.0
 
 - view: link_clicks
-  sql_table_name: derived.link_clicks
+  sql_table_name: demo.link_clicks
   fields:
   
   # DIMENSIONS #

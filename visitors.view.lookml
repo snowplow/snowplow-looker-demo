@@ -17,7 +17,7 @@
 # Version: 1.0.0
 
 - view: visitors
-  sql_table_name: derived.visitors
+  sql_table_name: demo.visitors
   fields:
   
   # DIMENSIONS #

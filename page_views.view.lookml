@@ -17,7 +17,7 @@
 # Version: 1.0.0
 
 - view: page_views
-  sql_table_name: derived.page_views
+  sql_table_name: demo.page_views
   fields:
   
   # DIMENSIONS #

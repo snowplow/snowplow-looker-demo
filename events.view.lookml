@@ -17,7 +17,7 @@
 # Version: 1.0.0
 
 - view: events
-  sql_table_name: derived.enriched_events
+  sql_table_name: demo.enriched_events
   fields:
 
   - dimension: br_name
@@ -63,10 +63,10 @@
     type: int
     sql: ${TABLE}.dvce_screenwidth
 
-  - dimension_group: dvce_tstamp
+  - dimension_group: dvce_created_tstamp
     type: time
     timeframes: [time, date, week, month]
-    sql: ${TABLE}.dvce_tstamp
+    sql: ${TABLE}.dvce_created_tstamp
 
   - dimension: dvce_type
     sql: ${TABLE}.dvce_type
@@ -349,7 +349,7 @@
   # ----- Sets of fields for drilling ------
   sets:
     event_detail:
-    - dvce_tstamp_time
+    - dvce_created_tstamp_time
     - event
     - page_urlhost
     - page_urlpath
